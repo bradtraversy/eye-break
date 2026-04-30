@@ -1,6 +1,6 @@
 {
   "name": "eye-break",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A tiny cross-platform desktop reminder app for the 20-20-20 eye rule.",
   "main": "src/main.js",
   "scripts": {
@@ -8,9 +8,9 @@
     "dev": "electron --no-sandbox .",
     "check": "node --check src/main.js && node --check src/preload.js && node --check src/renderer.js && node --check src/break.js && node --check src/sounds.js && node --check scripts/clean.js",
     "clean": "node scripts/clean.js",
-    "package:linux": "electron-builder --linux AppImage deb",
-    "package:mac": "electron-builder --mac dmg zip",
-    "package:win": "electron-builder --win nsis",
+    "package:linux": "electron-builder --linux AppImage deb --publish never",
+    "package:mac": "electron-builder --mac dmg zip --publish never",
+    "package:win": "electron-builder --win nsis --publish never",
     "install:linux-desktop": "./scripts/install-linux-desktop.sh"
   },
   "keywords": [
