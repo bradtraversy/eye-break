@@ -1,0 +1,84 @@
+{
+  "name": "eye-break",
+  "version": "1.0.0",
+  "description": "A tiny cross-platform desktop reminder app for the 20-20-20 eye rule.",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron --no-sandbox .",
+    "dev": "electron --no-sandbox .",
+    "check": "node --check src/main.js && node --check src/preload.js && node --check src/renderer.js && node --check src/break.js && node --check src/sounds.js && node --check scripts/clean.js",
+    "clean": "node scripts/clean.js",
+    "package:linux": "electron-builder --linux AppImage deb",
+    "package:mac": "electron-builder --mac dmg zip",
+    "package:win": "electron-builder --win nsis",
+    "install:linux-desktop": "./scripts/install-linux-desktop.sh"
+  },
+  "keywords": [
+    "eye strain",
+    "20-20-20",
+    "reminder",
+    "desktop"
+  ],
+  "author": "Brad Traversy",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^41.3.0",
+    "electron-builder": "^26.8.1"
+  },
+  "build": {
+    "appId": "com.bradtraversy.eye-break",
+    "productName": "EyeBreak",
+    "artifactName": "EyeBreak-${version}-${os}-${arch}.${ext}",
+    "files": [
+      "src/**/*",
+      "package.json",
+      "build/**/*"
+    ],
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "icon": "build/icon.png",
+    "linux": {
+      "category": "Utility",
+      "maintainer": "Brad Traversy",
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "EyeBreak"
+    }
+  },
+  "homepage": "https://github.com/bradtraversy/eye-break",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bradtraversy/eye-break.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bradtraversy/eye-break/issues"
+  }
+}

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EyeBreak</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero">
+        <div class="badge">20 · 20 · 20</div>
+        <h1>EyeBreak</h1>
+        <p>Every 20 minutes, look 20 feet away for 20 seconds.</p>
+      </section>
+
+      <section class="timer-card">
+        <div class="ring" aria-label="Time until next break">
+          <span id="timeRemaining">20:00</span>
+          <small id="statusText">Next eye break</small>
+        </div>
+        <div class="controls">
+          <button id="pauseBtn" class="primary">Pause</button>
+          <button id="resetBtn">Reset</button>
+          <button id="breakNowBtn">Break now</button>
+        </div>
+      </section>
+
+      <section class="settings-card">
+        <h2>Settings</h2>
+        <label>
+          Work interval
+          <select id="workMinutes">
+            <option value="15">15 minutes</option>
+            <option value="20" selected>20 minutes</option>
+            <option value="25">25 minutes</option>
+            <option value="30">30 minutes</option>
+          </select>
+        </label>
+        <label>
+          Break length
+          <select id="breakSeconds">
+            <option value="20" selected>20 seconds</option>
+            <option value="30">30 seconds</option>
+            <option value="45">45 seconds</option>
+            <option value="60">60 seconds</option>
+          </select>
+        </label>
+        <label class="toggle">
+          <span>Desktop notifications</span>
+          <input id="notificationsEnabled" type="checkbox" checked />
+        </label>
+        <label class="toggle">
+          <span>Notification sound</span>
+          <input id="soundEnabled" type="checkbox" checked />
+        </label>
+        <label class="toggle">
+          <span>Launch on login</span>
+          <input id="launchAtLogin" type="checkbox" />
+        </label>
+      </section>
+
+      <section class="tips-card">
+        <h2>Quick relief</h2>
+        <ul>
+          <li>Blink slowly 5–10 times during each break.</li>
+          <li>Look out a window if you can; distant focus matters.</li>
+          <li>Lower screen brightness if white pages feel harsh.</li>
+          <li>If strain persists, call an eye doctor — don’t tough it out.</li>
+        </ul>
+      </section>
+    </main>
+    <script src="sounds.js"></script>
+    <script src="renderer.js"></script>
+  </body>
+</html>
