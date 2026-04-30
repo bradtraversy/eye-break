@@ -80,5 +80,6 @@ jobs:
           draft: true
           tag_name: ${{ github.ref_name }}
           name: EyeBreak ${{ github.ref_name }}
+          body_path: .github/release-notes-${{ github.ref_name }}.md
           fail_on_unmatched_files: true
           files: dist-release/*

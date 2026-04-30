@@ -4,6 +4,8 @@ EyeBreak is a tiny cross-platform desktop app for the **20-20-20 eye rule**: eve
 
 It runs quietly in the tray/menu bar and reminds you to rest your eyes without needing a browser tab open.
 
+![EyeBreak screenshot](src/assets/screen.png)
+
 ## Features
 
 - 20-minute eye break reminders
@@ -19,13 +21,15 @@ It runs quietly in the tray/menu bar and reminds you to rest your eyes without n
 
 ## Download
 
-Public releases should include native installers for:
+Download the latest release from the [GitHub Releases page](https://github.com/bradtraversy/eye-break/releases).
 
-- **Linux:** `.AppImage` and `.deb`
+Available builds:
+
 - **Windows:** `.exe` installer
-- **macOS:** `.dmg` and `.zip`
+- **macOS:** universal `.dmg` and `.zip`
+- **Linux:** `.AppImage` and `.deb`
 
-Installers are produced by the GitHub Actions release workflow on each native OS runner.
+> Windows and macOS builds are currently unsigned, so SmartScreen or Gatekeeper may warn before opening.
 
 ## Run from source
 
@@ -48,7 +52,7 @@ Build output is written to `dist/`.
 ```bash
 npm run package:linux # Linux: AppImage + .deb
 npm run package:win   # Windows: NSIS .exe installer
-npm run package:mac   # macOS: .dmg + .zip
+npm run package:mac   # macOS: universal .dmg + .zip
 ```
 
 For best results, build each target on its native OS:
@@ -80,11 +84,11 @@ The release workflow lives at `.github/workflows/release.yml`.
 To create a release:
 
 ```bash
-git tag v1.0.0
-git push origin v1.0.0
+git tag v1.0.7
+git push origin v1.0.7
 ```
 
-GitHub Actions will build Linux, Windows, and macOS artifacts, upload workflow artifacts, and attach them to a draft GitHub Release.
+GitHub Actions builds Linux, Windows, and macOS artifacts, uploads workflow artifacts, and attaches them to a draft GitHub Release.
 
 ## Development commands
 

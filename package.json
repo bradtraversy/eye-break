@@ -1,6 +1,6 @@
 {
   "name": "eye-break",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A tiny cross-platform desktop reminder app for the 20-20-20 eye rule.",
   "main": "src/main.js",
   "scripts": {
