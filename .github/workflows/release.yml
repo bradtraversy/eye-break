@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     tags:
-      - v*
+      - 'v*'
 
 permissions:
   contents: write
@@ -65,7 +65,7 @@ jobs:
     name: Publish draft release
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, refs/tags/)
+    if: startsWith(github.ref, 'refs/tags/')
 
     steps:
       - name: Download artifacts
