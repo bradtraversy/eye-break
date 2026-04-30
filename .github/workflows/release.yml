@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     tags:
-      - 'v*'
+      - v*
 
 permissions:
   contents: write
@@ -61,9 +61,22 @@ jobs:
           path: ${{ matrix.artifacts }}
           if-no-files-found: error
 
-      - name: Upload files to GitHub Release
-        if: startsWith(github.ref, 'refs/tags/')
+  publish:
+    name: Publish draft release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, refs/tags/)
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist-release
+          merge-multiple: true
+
+      - name: Create draft release
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ matrix.artifacts }}
           draft: true
+          fail_on_unmatched_files: true
+          files: dist-release/*
