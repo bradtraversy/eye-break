@@ -3,6 +3,9 @@ function playToneSequence(kind) {
   if (!AudioContext) return;
 
   const ctx = new AudioContext();
+  if (ctx.state === 'suspended') {
+    ctx.resume().catch(() => {});
+  }
   const now = ctx.currentTime;
   const master = ctx.createGain();
   master.gain.setValueAtTime(0.0001, now);

@@ -1,8 +1,16 @@
 const { app, BrowserWindow, ipcMain, Menu, Notification, Tray, nativeImage, shell } = require('electron');
+const { spawn, spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
 const isDev = !app.isPackaged;
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+
+if (process.platform === 'linux') {
+  app.setName('EyeBreak');
+  app.setDesktopName('eye-break.desktop');
+}
+
 let mainWindow;
 let tray;
 let breakWindow;
@@ -71,15 +79,42 @@ function createWindow() {
   });
 }
 
+function assetPath(filename) {
+  return path.join(__dirname, 'assets', filename);
+}
+
 function trayIconPath() {
-  const size = process.platform === 'linux' ? 22 : 32;
-  return path.join(__dirname, 'assets', `tray-${size}.png`);
+  const size = process.platform === 'linux' ? 24 : 32;
+  return assetPath(`tray-${size}.png`);
+}
+
+function linuxTrayIconPath() {
+  const outputPath = path.join(app.getPath('userData'), 'tray-icon.png');
+  const candidates = [trayIconPath(), assetPath('tray-24.png'), assetPath('tray-22.png'), assetPath('icon.png')];
+
+  for (const candidate of candidates) {
+    try {
+      const image = nativeImage.createFromPath(candidate);
+      if (image.isEmpty()) continue;
+      fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+      fs.writeFileSync(outputPath, image.resize({ width: 24, height: 24 }).toPNG());
+      return outputPath;
+    } catch {
+      // Try the next candidate.
+    }
+  }
+
+  return trayIconPath();
 }
 
 function createTray() {
-  let icon = nativeImage.createFromPath(trayIconPath());
-  if (icon.isEmpty()) icon = nativeImage.createFromPath(path.join(__dirname, 'assets', 'icon.png'));
-  tray = new Tray(icon);
+  if (process.platform === 'linux') {
+    tray = new Tray(linuxTrayIconPath());
+  } else {
+    let icon = nativeImage.createFromPath(trayIconPath());
+    if (icon.isEmpty()) icon = nativeImage.createFromPath(assetPath('icon.png'));
+    tray = new Tray(icon);
+  }
   tray.setToolTip('EyeBreak');
   updateTrayMenu();
 }
@@ -190,10 +225,50 @@ function createBreakWindow() {
   });
 }
 
+function sendSoundToWindow(window, kind) {
+  if (!window || window.isDestroyed()) return;
+
+  const send = () => {
+    if (!window.isDestroyed()) window.webContents.send('play-sound', kind);
+  };
+
+  if (window.webContents.isLoading()) {
+    window.webContents.once('did-finish-load', send);
+  } else {
+    send();
+  }
+}
+
+function commandExists(command) {
+  return spawnSync('sh', ['-c', `command -v ${command}`], { stdio: 'ignore' }).status === 0;
+}
+
+function playNativeSound(kind) {
+  if (process.platform !== 'linux') return;
+
+  const soundFile = kind === 'break-end'
+    ? '/usr/share/sounds/freedesktop/stereo/complete.oga'
+    : '/usr/share/sounds/freedesktop/stereo/bell.oga';
+
+  const players = [
+    { command: 'aplay', args: ['/usr/share/sounds/alsa/Front_Center.wav'] },
+    { command: 'canberra-gtk-play', args: ['-i', kind === 'break-end' ? 'complete' : 'bell'] },
+    { command: 'pw-play', args: [soundFile] },
+  ];
+
+  const player = players.find(({ command }) => commandExists(command));
+  if (!player) return;
+
+  const child = spawn(player.command, player.args, { detached: true, stdio: 'ignore' });
+  child.on('error', () => {});
+  child.unref();
+}
+
 function playSound(kind) {
   if (!settings.soundEnabled) return;
-  if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('play-sound', kind);
-  if (breakWindow && !breakWindow.isDestroyed()) breakWindow.webContents.send('play-sound', kind);
+  playNativeSound(kind);
+  sendSoundToWindow(mainWindow, kind);
+  sendSoundToWindow(breakWindow, kind);
 }
 
 function showNotification(title, body) {
